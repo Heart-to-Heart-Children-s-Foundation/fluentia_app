@@ -12,6 +12,7 @@ def init_db():
     """Ініціалізує базу даних, створюючи таблиці, якщо вони не існують."""
     conn = sqlite3.connect(DB_NAME)  # Встановлення з'єднання з БД
     cursor = conn.cursor()  # Створення об'єкту курсора для виконання SQL запитів
+    cursor.execute("PRAGMA journal_mode=WAL")
 
     # Створення таблиці користувачів
     cursor.execute('''
