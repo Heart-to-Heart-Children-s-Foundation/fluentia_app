@@ -1,9 +1,10 @@
 import sqlite3
 from datetime import datetime, time
 import random
+import os
 
 # Визначаємо шлях до файлу бази даних. Використовуємо змінну середовища або поточну папку.
-DB_NAME = "db.sqlite3"
+DB_NAME = os.getenv("DB_PATH", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "db.sqlite3"))
 WORDS_PER_PAGE_DB = 10  # Константа: кількість слів на сторінці словника
 
 

@@ -11,7 +11,7 @@ import datetime
 from PIL import Image, ImageDraw, ImageFont
 from fastapi.responses import StreamingResponse
 
-from common.db import init_db, save_user, get_user_vocabulary, delete_word_from_vocabulary
+from common.db import init_db, save_user, get_user_vocabulary, delete_word_from_vocabulary, DB_NAME
 from services.gemini_service import translate_with_example_gemini, generate_distractors_gemini
 
 init_db()
@@ -75,7 +75,7 @@ class SaveWordRequest(BaseModel):
 # ЭНДПОИНТ: Регистрация нового аккаунта
 @app.post("/api/register")
 async def register_user(user: UserRegister):
-    db_path = os.path.join(os.getcwd(), "db.sqlite3")
+    db_path = DB_NAME
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -104,7 +104,7 @@ async def register_user(user: UserRegister):
 # ЭНДПОИНТ: Вход в существующий аккаунт (с любого устройства)
 @app.post("/api/login")
 async def login_user(user: UserLogin):
-    db_path = os.path.join(os.getcwd(), "db.sqlite3")
+    db_path = DB_NAME
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -149,7 +149,7 @@ async def translate_text(request: TranslateRequest):
 @app.post("/api/save_word")
 async def save_word(req: SaveWordRequest):
     try:
-        db_path = os.path.join(os.getcwd(), "db.sqlite3")
+        db_path = DB_NAME
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?)", (req.user_id,))
@@ -181,7 +181,7 @@ async def save_word(req: SaveWordRequest):
 @app.get("/api/stats/{user_id}")
 async def get_stats(user_id: int):
     try:
-        db_path = os.path.join(os.getcwd(), "db.sqlite3")
+        db_path = DB_NAME
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
             # Рахуємо збережені слова
@@ -218,7 +218,7 @@ class ProfileUpdate(BaseModel):
 
 @app.post("/api/update_profile")
 async def update_profile(data: ProfileUpdate):
-    db_path = os.path.join(os.getcwd(), "db.sqlite3")
+    db_path = DB_NAME
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -248,7 +248,7 @@ async def delete_word(user_id: int, word_id: int):
 
 @app.post("/api/roleplay")
 async def roleplay(req: RoleplayRequest):
-    db_path = os.path.join(os.getcwd(), "db.sqlite3")
+    db_path = DB_NAME
 
     with sqlite3.connect(db_path) as conn:
         cursor = conn.cursor()
@@ -328,7 +328,7 @@ REPLY: [Твоя відповідь у ролі АНГЛІЙСЬКОЮ]
 
 @app.post("/api/roleplay_feedback")
 async def roleplay_feedback(req: FeedbackRequest):
-    db_path = os.path.join(os.getcwd(), "db.sqlite3")
+    db_path = DB_NAME
     with sqlite3.connect(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT role, content FROM roleplay_history WHERE user_id = ? AND scenario = ? ORDER BY id ASC",
@@ -426,7 +426,7 @@ async def get_quiz(req: QuizRequest):
 
 @app.get("/api/certificate/{user_id}")
 async def download_certificate(user_id: int):
-    db_path = os.path.join(os.getcwd(), "db.sqlite3")
+    db_path = DB_NAME
     try:
         # 1. Достаем имя и уровень из БД
         with sqlite3.connect(db_path) as conn:
