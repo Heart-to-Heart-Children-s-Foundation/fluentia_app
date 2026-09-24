@@ -31,7 +31,7 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           cat > deploy.sh <<EOF
-          set -euo pipefail
+          set -eu
           cd /opt/fluentia/app
           sudo -H -u fluentia git fetch --quiet origin main
           sudo -H -u fluentia git reset --hard "$SHA"
